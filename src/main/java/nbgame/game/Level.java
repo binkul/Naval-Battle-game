@@ -4,5 +4,5 @@ public enum Level {
     LOW,
     MEDIUM,
     HIGH,
-    EXPERT;
+    EXPERT
 }

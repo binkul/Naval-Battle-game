@@ -6,7 +6,6 @@ import javafx.scene.paint.Color;
 import nbgame.constant.Dimension;
 import nbgame.constant.FileAccess;
 import nbgame.game.BattleField;
-import nbgame.game.Game;
 import nbgame.ship.*;
 
 import java.util.List;
@@ -14,105 +13,116 @@ import java.util.List;
 public class GraphicDriver {
     private final Image splashImage;
     private final Image hitImage;
+    private final Image blueTileImage;
+    private final Image greenTileImage;
+    private final Image redTileImage;
+    private final Image yellowTileImage;
     private final PathDriver pathDriver;
-    private final Game game;
 
-    public GraphicDriver(Game game) {
-        this.game = game;
+    public GraphicDriver() {
         pathDriver = new PathDriver();
-        splashImage = new Image(pathDriver.getPicPath(FileAccess.MISS_ICO_PATH));
-        hitImage = new Image(pathDriver.getPicPath(FileAccess.EXPLODE_ICO_PATH));
+        splashImage = new Image(pathDriver.getPath(FileAccess.MISS_ICO_PATH));
+        hitImage = new Image(pathDriver.getPath(FileAccess.EXPLODE_ICO_PATH));
+        blueTileImage = new Image(pathDriver.getPath(FileAccess.BLUE_TILE_PIC_PATH));
+        greenTileImage = new Image(pathDriver.getPath(FileAccess.GREEN_TILE_PIC_PATH));
+        redTileImage = new Image(pathDriver.getPath(FileAccess.RED_TILE_PIC_PATH));
+        yellowTileImage = new Image(pathDriver.getPath(FileAccess.YELLOW_TILE_PIC_PATH));
     }
 
-    public void repaintAll(List<Ship> ships, Tile[][] tiles, Canvas source) {
-        drawAllTiles(tiles, source);
-        drawRedLineForNeighbor(tiles, source);
-        drawShipsPicOnField(ships, source);
+    public void repaintAll(List<Ship> ships, Tile[][] tiles, Canvas canvas) {
+        drawAllTiles(tiles, canvas);
+        drawRedLineForNeighbor(tiles, canvas);
+        drawShipsPicOnField(ships, canvas);
     }
 
-    private void drawAllTiles(Tile[][] tiles, Canvas source) {
-        int shipCount;
-        ShipStatus shipStatus;
-
+    private void drawAllTiles(Tile[][] tiles, Canvas canvas) {
         for (int row = 0; row < Dimension.FIELD_HEIGHT; row++) {
             for (int column = 0; column < Dimension.FIELD_WIDTH; column++) {
-                shipCount = tiles[row][column].getSipsCount();
-
-                switch (shipCount) {
-                    case 0:
-                        drawTile(source, row, column, FileAccess.BLUE_TILE_PIC_PATH);
-                        break;
-                    case 1:
-                        shipStatus = tiles[row][column].getShipCollection().get(0).getOperation();
-                        drawTileUnderShip(source, shipStatus, row, column);
-                        break;
-                    default:
-                        drawTile(source, row, column, FileAccess.RED_TILE_PIC_PATH);
-                }
+                drawTile(tiles[row][column], row, column, canvas);
             }
         }
     }
 
-    private void drawTileUnderShip(Canvas source, ShipStatus shipStatus, int row, int column) {
-        if (shipStatus == ShipStatus.SHIP_MOVE_OVER) {
-            drawTile(source, row, column, FileAccess.GREEN_TILE_PIC_PATH);
-        } else if(shipStatus == ShipStatus.SHIP_PRESSED) {
-            drawTile(source, row, column, FileAccess.YELLOW_TILE_PIC_PATH);
-        } else {
-            drawTile(source, row, column, FileAccess.BLUE_TILE_PIC_PATH);
-        }
-    }
-
-    private void drawTile(Canvas source, int row, int column, String picPath) {
+    private void drawTile(Tile tile, int row, int column, Canvas canvas) {
         int x = column * Dimension.TILE_WIDTH + Dimension.FIELD_LEFT_MARGIN - 1;
         int y = row * Dimension.TILE_HEIGHT + Dimension.FIELD_TOP_MARGIN - 1;
-        source.getGraphicsContext2D().drawImage(new Image(pathDriver.getPicPath(picPath)), x, y);
+        int shipCount = tile.getSipsCount();
+
+        switch (shipCount) {
+            case 0:
+                canvas.getGraphicsContext2D().drawImage(blueTileImage, x, y);
+                break;
+            case 1:
+                ShipStatus shipStatus = tile.getShipCollection().get(0).getOperation();
+                if (shipStatus == ShipStatus.SHIP_MOVE_OVER) {
+                    canvas.getGraphicsContext2D().drawImage(greenTileImage, x, y);
+                } else if(shipStatus == ShipStatus.SHIP_PRESSED) {
+                    canvas.getGraphicsContext2D().drawImage(yellowTileImage, x, y);
+                } else {
+                    canvas.getGraphicsContext2D().drawImage(blueTileImage, x, y);
+                }
+                break;
+            default:
+                canvas.getGraphicsContext2D().drawImage(redTileImage, x, y);
+        }
     }
 
-    public void drawRedLineForNeighbor(Tile[][] tiles, Canvas source) {
-        source.getGraphicsContext2D().setStroke(Color.RED);
-        source.getGraphicsContext2D().setLineWidth(2.0);
+    public void drawRedLineForNeighbor(Tile[][] tiles, Canvas canvas) {
+        canvas.getGraphicsContext2D().setStroke(Color.RED);
+        canvas.getGraphicsContext2D().setLineWidth(2.0);
 
         for (int row = 0; row < Dimension.FIELD_HEIGHT; row++) {
             for (int column = 0; column < Dimension.FIELD_WIDTH; column++) {
-                if (tiles[row][column].getSipsCount() == 1) {
-                    drawUpNeighbor(row, column, tiles, source);
-                    drawDownNeighbor(row, column, tiles, source);
-                    drawLeftNeighbor(row, column, tiles, source);
-                    drawRightNeighbor(row, column, tiles, source);
-                }
+                drawNeighbors(tiles, row, column, canvas);
             }
         }
     }
 
-    public void drawShipsPicOnField(List<Ship> ships, Canvas source) {
+    public void drawShipsPicOnField(List<Ship> ships, Canvas canvas) {
         if (ships == null) {
             return;
         }
 
         for (Ship ship : ships) {
-            if (ship.getShipType() == ShipType.FOUR_MAST) {
-                drawShip(ship, source, FileAccess.FOUR_MAST_VERT_PIC_PATH, FileAccess.FOUR_MAST_HORIZ_PIC_PATH);
-            } else if (ship.getShipType() == ShipType.THREE_MAST) {
-                drawShip(ship, source, FileAccess.THREE_MAST_VERT_PIC_PATH, FileAccess.THREE_MAST_HORIZ_PIC_PATH);
-            } else if (ship.getShipType() == ShipType.TWO_MAST) {
-                drawShip(ship, source, FileAccess.TWO_MAST_VERT_PIC_PATH, FileAccess.TWO_MAST_HORIZ_PIC_PATH);
-            } else {
-                drawShip(ship, source, FileAccess.ONE_MAST_VERT_PIC_PATH, FileAccess.ONE_MAST_HORIZ_PIC_PATH);
-            }
+            drawShip(ship, canvas);
         }
     }
 
-    private void drawShip(Ship ship, Canvas source, String picVert, String picHoriz) {
+    private void drawShip(Ship ship, Canvas canvas) {
+        if (ship.getShipType() == ShipType.FOUR_MAST) {
+            drawShipPicture(ship, canvas, FileAccess.FOUR_MAST_VERT_PIC_PATH, FileAccess.FOUR_MAST_HORIZ_PIC_PATH);
+        } else if (ship.getShipType() == ShipType.THREE_MAST) {
+            drawShipPicture(ship, canvas, FileAccess.THREE_MAST_VERT_PIC_PATH, FileAccess.THREE_MAST_HORIZ_PIC_PATH);
+        } else if (ship.getShipType() == ShipType.TWO_MAST) {
+            drawShipPicture(ship, canvas, FileAccess.TWO_MAST_VERT_PIC_PATH, FileAccess.TWO_MAST_HORIZ_PIC_PATH);
+        } else {
+            drawShipPicture(ship, canvas, FileAccess.ONE_MAST_VERT_PIC_PATH, FileAccess.ONE_MAST_HORIZ_PIC_PATH);
+        }
+    }
+
+    private void drawShipPicture(Ship ship, Canvas source, String picVert, String picHoriz) {
         int shift = (Dimension.TILE_WIDTH - ship.getWidthPix()) / 2;
-        int x = ship.getOrientation() == VertHoriz.VERTICAL ? shift : 1;
-        int y = ship.getOrientation() == VertHoriz.VERTICAL ? 1 : shift;
-        String shipPath = ship.getOrientation() == VertHoriz.VERTICAL ? picVert : picHoriz;
+        int x = ship.getOrientation() == Position.VERTICAL ? shift : 1;
+        int y = ship.getOrientation() == Position.VERTICAL ? 1 : shift;
+        String shipPath = ship.getOrientation() == Position.VERTICAL ? picVert : picHoriz;
 
         y += Dimension.FIELD_LEFT_MARGIN + ship.getHead().getRow() * Dimension.TILE_WIDTH;
         x += Dimension.FIELD_TOP_MARGIN + ship.getHead().getColumn() * Dimension.TILE_HEIGHT;
 
-        source.getGraphicsContext2D().drawImage(new Image(pathDriver.getPicPath(shipPath)), x, y);
+        source.getGraphicsContext2D().drawImage(new Image(pathDriver.getPath(shipPath)), x, y);
+    }
+
+    private void drawNeighbors(Tile[][] tiles, int row, int column, Canvas canvas) {
+        if (tiles[row][column].getSipsCount() == 1) {
+            drawUpNeighbor(row, column, tiles, canvas);
+            drawDownNeighbor(row, column, tiles, canvas);
+            drawLeftNeighbor(row, column, tiles, canvas);
+            drawRightNeighbor(row, column, tiles, canvas);
+        }
+    }
+
+    private boolean shouldStrokeLine(Tile[][] tiles, Ship ship, int row, int column) {
+        return tiles[row][column].getSipsCount() == 1 && ! ship.equals(tiles[row][column].getShipCollection().get(0));
     }
 
     private void drawUpNeighbor(int row, int column, Tile[][] tiles, Canvas field) {
@@ -122,11 +132,8 @@ public class GraphicDriver {
         int xPosEnd = column * Dimension.TILE_WIDTH + 55;
 
         if (row == 0) return;
-
-        if (tiles[row - 1][column].getSipsCount() == 1) {
-            if (!ship.equals(tiles[row - 1][column].getShipCollection().get(0))) {
-                field.getGraphicsContext2D().strokeLine(xPosStart, yPos, xPosEnd, yPos);
-            }
+        if (shouldStrokeLine(tiles, ship, row - 1, column)) {
+            field.getGraphicsContext2D().strokeLine(xPosStart, yPos, xPosEnd, yPos);
         }
     }
 
@@ -137,11 +144,8 @@ public class GraphicDriver {
         int xPosEnd = column * Dimension.TILE_WIDTH + 55;
 
         if (row >= Dimension.FIELD_HEIGHT - 1) return;
-
-        if (tiles[row + 1][column].getSipsCount() == 1) {
-            if (!ship.equals(tiles[row + 1][column].getShipCollection().get(0))) {
-                field.getGraphicsContext2D().strokeLine(xPosStart, yPos, xPosEnd, yPos);
-            }
+        if (shouldStrokeLine(tiles, ship, row + 1, column)) {
+            field.getGraphicsContext2D().strokeLine(xPosStart, yPos, xPosEnd, yPos);
         }
     }
 
@@ -152,11 +156,8 @@ public class GraphicDriver {
         int yPosEnd = row * Dimension.TILE_HEIGHT + 55;
 
         if (column == 0) return;
-
-        if (tiles[row][column - 1].getSipsCount() == 1) {
-            if (!ship.equals(tiles[row][column - 1].getShipCollection().get(0))) {
-                field.getGraphicsContext2D().strokeLine(xPos, yPosStart, xPos, yPosEnd);
-            }
+        if (shouldStrokeLine(tiles, ship, row, column - 1)) {
+            field.getGraphicsContext2D().strokeLine(xPos, yPosStart, xPos, yPosEnd);
         }
     }
 
@@ -167,11 +168,8 @@ public class GraphicDriver {
         int yPosEnd = row * Dimension.TILE_HEIGHT + 55;
 
         if (column >= Dimension.FIELD_WIDTH - 1) return;
-
-        if (tiles[row][column + 1].getSipsCount() == 1) {
-            if (!ship.equals(tiles[row][column + 1].getShipCollection().get(0))) {
-                field.getGraphicsContext2D().strokeLine(xPos, yPosStart, xPos, yPosEnd);
-            }
+        if (shouldStrokeLine(tiles, ship, row, column + 1)) {
+            field.getGraphicsContext2D().strokeLine(xPos, yPosStart, xPos, yPosEnd);
         }
     }
 
@@ -184,23 +182,27 @@ public class GraphicDriver {
     }
 
     public void drawAllAfterBattle(BattleField battleField, List<Ship> ships) {
-        int x;
-        int y;
         battleField.repaintBackground();
         drawShipsPicOnField(ships, battleField.getCanvas());
 
         for (int row = 0; row < Dimension.FIELD_HEIGHT; row++) {
             for (int column = 0; column < Dimension.FIELD_WIDTH; column++) {
-                Tile tile = battleField.getTiles()[row][column];
-                if (tile.getHit() == Hit.HIT) {
-                    x = row * Dimension.TILE_HEIGHT + Dimension.FIELD_TOP_MARGIN;
-                    y = column * Dimension.TILE_WIDTH + Dimension.FIELD_LEFT_MARGIN;
-                    if (tile.getSipsCount() > 0) {
-                        drawExplosion(battleField.getCanvas(), x, y, Hit.HIT);
-                    } else {
-                        drawExplosion(battleField.getCanvas(), x, y, Hit.NONE);
-                    }
-                }
+                drawHitAfterBattle(battleField, row, column);
+            }
+        }
+    }
+
+    private void drawHitAfterBattle(BattleField battleField, int row, int column) {
+        int x, y;
+
+        Tile tile = battleField.getTiles()[row][column];
+        if (tile.getHit() == Hit.HIT) {
+            x = row * Dimension.TILE_HEIGHT + Dimension.FIELD_TOP_MARGIN;
+            y = column * Dimension.TILE_WIDTH + Dimension.FIELD_LEFT_MARGIN;
+            if (tile.getSipsCount() > 0) {
+                drawExplosion(battleField.getCanvas(), x, y, Hit.HIT);
+            } else {
+                drawExplosion(battleField.getCanvas(), x, y, Hit.NONE);
             }
         }
     }

@@ -10,11 +10,11 @@ import nbgame.ship.Tile;
 
 import java.util.*;
 
-public class ShootLogic implements Logicable{
-    private static final Random random = new Random();
-    private static final int MAX_RANDOM_REPEAT = 25;
-    private final Game game;
+public class ShootLogic implements Logicable {
+    private static final Random RANDOM = new Random();
+    private static final int MAX_RANDOM_REPEAT = 100;
 
+    private final Game game;
     private List<Point> shootsPoints = new ArrayList<>();
     private Set<Point> avoidsPoints = new HashSet<>();
 
@@ -23,11 +23,9 @@ public class ShootLogic implements Logicable{
     }
 
     @Override
-    public void updateLogic(Ship ship, Point shootPoint) {
+    public void buildStrategy(Ship ship, Point shootPoint) {
         if(ship.getHitResult() == Hit.HIT_AND_SINK) {
-            shootsPoints.add(shootPoint);
-            updateAvoids();
-            shootsPoints.clear();
+            updateAvoids(shootPoint);
         } else if (ship.getHitResult() == Hit.HIT) {
             shootsPoints.add(shootPoint);
         }
@@ -89,8 +87,8 @@ public class ShootLogic implements Logicable{
         Tile tile;
 
         while (repeat) {
-            row = random.nextInt(Dimension.FIELD_HEIGHT);
-            column = random.nextInt(Dimension.FIELD_WIDTH);
+            row = RANDOM.nextInt(Dimension.FIELD_HEIGHT);
+            column = RANDOM.nextInt(Dimension.FIELD_WIDTH);
             tile = game.getGamerBattleField().getTiles()[row][column];
 
             if (game.getGameForm().getLevelOfDifficulty() == Level.EXPERT) {
@@ -162,9 +160,11 @@ public class ShootLogic implements Logicable{
         }
     }
 
-    private void updateAvoids() {
+    private void updateAvoids(Point point) {
         int x;
         int y;
+
+        shootsPoints.add(point);
 
         for (Point shootPoint : shootsPoints) {
             x = shootPoint.getRow();
@@ -174,6 +174,8 @@ public class ShootLogic implements Logicable{
             if (isShootPossible(x + 1, y)) avoidsPoints.add(new Point(x + 1, y));
             if (isShootPossible(x, y + 1)) avoidsPoints.add(new Point(x, y + 1));
         }
+
+        shootsPoints.clear();
     }
 
     private void clearShoots() {

@@ -17,11 +17,12 @@ import nbgame.game.Level;
 
 public class GameForm {
     private static final int MARGIN = 40;
+    private static final int GAP = 10;
 
     private final PathDriver pathDriver = new PathDriver();
     private final Game game;
     private final Label lblGamerName = new Label();
-    private final Text txtStatus = new Text("Naval Battle Game"); //  Label lblStatus = new Label("Naval Battle Game");
+    private final Text txtStatus = new Text("Naval Battle Game");
     private final Label lblGamerShots = new Label("0");
     private final Label lblGamerResult = new Label("0");
     private final Label lblCompShots = new Label("0");
@@ -41,7 +42,7 @@ public class GameForm {
 
     public void open() {
         Stage window = new Stage();
-        Image icon = new Image(pathDriver.getPicPath(FileAccess.SHIP_ICO_PATH));
+        Image icon = new Image(pathDriver.getPath(FileAccess.SHIP_ICO_PATH));
         window.getIcons().add(icon);
         window.setScene(setScene());
         window.initStyle(StageStyle.DECORATED);
@@ -110,32 +111,27 @@ public class GameForm {
         Menu menuHelp = new Menu("Help");
         MenuItem menuAbout = new MenuItem("About");
         MenuItem menuResult = new MenuItem("Results");
-        menuAbout.setOnAction(e -> AboutForm.open(pathDriver.getPicPath(FileAccess.SHIP_ICO_PATH)));
-        menuResult.setOnAction(e -> StatisticForm.open(pathDriver.getPicPath(FileAccess.SHIP_ICO_PATH), game.getStatistics()));
+        menuAbout.setOnAction(e -> AboutForm.open(pathDriver.getPath(FileAccess.SHIP_ICO_PATH)));
+        menuResult.setOnAction(e -> StatisticForm.open(pathDriver.getPath(FileAccess.SHIP_ICO_PATH), game.getStatistics()));
         menuHelp.getItems().addAll(menuAbout, menuResult);
 
         // Menu game
         Menu gameMenu = new Menu("Game");
-        Menu menuManual = new Menu("Manually");
         SeparatorMenuItem sep1 = new SeparatorMenuItem();
         SeparatorMenuItem sep2 = new SeparatorMenuItem();
 
         MenuItem menuExit = new MenuItem("Exit");
         MenuItem menuRandom = new MenuItem("Random");
-        MenuItem menuFromNew = new MenuItem("New placement");
-        MenuItem menuFromActual = new MenuItem("From current");
+        MenuItem menuManual = new MenuItem("Manually");
         menuEnd.setDisable(true);
-
-        menuManual.getItems().addAll(menuFromNew, menuFromActual);
         menuArrange.getItems().addAll(menuManual, menuRandom);
 
         gameMenu.getItems().addAll(menuArrange, menuSettings, sep1, menuStart, menuEnd, sep2, menuExit);
 
         menuStart.setOnAction(e -> game.startNewGame());
         menuEnd.setOnAction(e -> game.breakGame());
-        menuFromNew.setOnAction(e -> openArrangeForm(true));
-        menuFromActual.setOnAction(e -> openArrangeForm(false));
         menuRandom.setOnAction(e -> game.gamerShipsRandom());
+        menuManual.setOnAction(e -> openArrangeForm());
         menuSettings.setOnAction(e -> new SettingsForm(game).open());
         menuExit.setOnAction(e -> System.exit(0));
 
@@ -172,8 +168,8 @@ public class GameForm {
 
         gridPane.add(setGamerNameContainer(), 0, 0, 1, 1);
         gridPane.add(setCompNameContainer(), 1, 0, 1, 1);
-        gridPane.add(userPane, 0, 1, 1, 1); //game.getGamerBattleField().getCanvas(), 1), 0, 1, 1, 1);
-        gridPane.add(compPane, 1, 1, 1, 1); // setCanvasContainer(game.getComputerBattleField().getCanvas(), 0), 1, 1, 1, 1);
+        gridPane.add(userPane, 0, 1, 1, 1);
+        gridPane.add(compPane, 1, 1, 1, 1);
         gridPane.add(setResultContainer(lblGamerShots, lblGamerResult), 0, 2, 1,1);
         gridPane.add(setResultContainer(lblCompShots, lblCompResult), 1, 2, 1,1);
 
@@ -185,7 +181,7 @@ public class GameForm {
     private HBox setGamerNameContainer() {
         HBox nameHBox = new HBox();
 
-        ImageView ico = new ImageView(pathDriver.getPicPath(FileAccess.USER_ICO_PATH));
+        ImageView ico = new ImageView(pathDriver.getPath(FileAccess.USER_ICO_PATH));
         ico.setFitWidth(64);
         ico.setFitHeight(64);
 
@@ -203,7 +199,7 @@ public class GameForm {
     private HBox setCompNameContainer() {
         HBox compHBox = new HBox();
 
-        ImageView ico = new ImageView(pathDriver.getPicPath(FileAccess.COMPUTER_ICO_PATH));
+        ImageView ico = new ImageView(pathDriver.getPath(FileAccess.COMPUTER_ICO_PATH));
         ico.setFitWidth(64);
         ico.setFitHeight(64);
 
@@ -218,16 +214,16 @@ public class GameForm {
     }
 
     private GridPane setResultContainer(Label lblShots, Label lblResult) {
-        GridPane resultGrid = createTwoColumnGrid(10);
+        GridPane resultGrid = createTwoColumnGrid();
 
         HBox hBox1 = new HBox();
         hBox1.setStyle(GameStyle.SUB_BOTTOM_SET);
         HBox hBox2 = new HBox();
         hBox2.setStyle(GameStyle.SUB_BOTTOM_SET);
 
-        lblShots.setGraphic(new ImageView(new Image(pathDriver.getPicPath(FileAccess.MISS_ICO_PATH), 32, 32, false, false)));
+        lblShots.setGraphic(new ImageView(new Image(pathDriver.getPath(FileAccess.MISS_ICO_PATH), 32, 32, false, false)));
         lblShots.setStyle(GameStyle.LBL_NAME);
-        lblResult.setGraphic(new ImageView(new Image(pathDriver.getPicPath(FileAccess.EXPLODE_ICO_PATH), 32, 32, false, false)));
+        lblResult.setGraphic(new ImageView(new Image(pathDriver.getPath(FileAccess.EXPLODE_ICO_PATH), 32, 32, false, false)));
         lblResult.setStyle(GameStyle.LBL_NAME);
         hBox1.getChildren().add(lblShots);
         hBox2.getChildren().add(lblResult);
@@ -238,9 +234,9 @@ public class GameForm {
         return resultGrid;
     }
 
-    private GridPane createTwoColumnGrid(double gap) {
+    private GridPane createTwoColumnGrid() {
         GridPane grid = new GridPane();
-        grid.setHgap(gap);
+        grid.setHgap(GAP);
 
         ColumnConstraints colTop1 = new ColumnConstraints();
         ColumnConstraints colTop2 = new ColumnConstraints();
@@ -254,7 +250,7 @@ public class GameForm {
         return grid;
     }
 
-    public Label getLblGamerName() {
+    Label getLblGamerName() {
         return lblGamerName;
     }
 
@@ -309,8 +305,8 @@ public class GameForm {
         return arrangeForm;
     }
 
-    private void openArrangeForm(boolean newPlacement) {
+    private void openArrangeForm() {
         arrangeForm = new ArrangeForm(game);
-        arrangeForm.open(newPlacement);
+        arrangeForm.open();
     }
 }

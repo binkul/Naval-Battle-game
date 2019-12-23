@@ -22,26 +22,28 @@ public class ArrangeForm {
 
     private final Game game;
     private Button btnOk = new Button("Ok");
+    private Label lblTitle = new Label();
     private Stage window;
 
     public ArrangeForm(Game game) {
         this.game = game;
     }
 
-    public void open(boolean newPlacement) {
+    public void open() {
         PathDriver pathDriver = new PathDriver();
-        game.getShipArrangement().initBattleField(newPlacement);
+        game.getShipArrangement().initBattleField();
 
         window = new Stage();
         window.setScene(setScene());
         window.setTitle("Strategy");
-        window.getIcons().add(new Image(pathDriver.getPicPath(FileAccess.SHIP_ICO_PATH)));
+        window.getIcons().add(new Image(pathDriver.getPath(FileAccess.SHIP_ICO_PATH)));
         window.initModality(Modality.APPLICATION_MODAL);
+        window.setOnCloseRequest(e -> clickCancelButton());
 
         window.show();
     }
 
-    public void close() {
+    private void close() {
         window.close();
         window = null;
     }
@@ -49,10 +51,8 @@ public class ArrangeForm {
     private Scene setScene() {
         BorderPane root = new BorderPane();
 
-        Label lblTitle = new Label("Plan your strategy");
         lblTitle.setStyle(
                 "                -fx-font-family: Arial;" +
-                "                -fx-text-fill: blue;" +
                 "                -fx-font-weight: bold;" +
                 "                -fx-font-size: 24px;" +
                 "                -fx-text-alignment: left;" +
@@ -134,5 +134,9 @@ public class ArrangeForm {
 
     public Button getBtnOk() {
         return btnOk;
+    }
+
+    public Label getLblTitle() {
+        return lblTitle;
     }
 }

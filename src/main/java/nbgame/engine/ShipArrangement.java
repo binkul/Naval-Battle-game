@@ -4,7 +4,6 @@ import nbgame.constant.FileAccess;
 import nbgame.game.BattleField;
 import nbgame.game.Game;
 import nbgame.ship.Ship;
-import nbgame.user.ArrangeKeyboard;
 import nbgame.user.ArrangeMouse;
 import nbgame.user.Movable;
 
@@ -15,26 +14,18 @@ public class ShipArrangement {
 
     private boolean update;
     private List<Ship> ships;
-    private Movable  arrangeInterface;
     private BattleField arrangeBattleField;
 
     public ShipArrangement(Game game) {
         this.game = game;
-        arrangeInterface = new ArrangeKeyboard(game); //ArrangeMouse(game);
+        Movable arrangeInterface = new ArrangeMouse(game);
         arrangeBattleField = new BattleField(game, FileAccess.FIELD_PIC_PATH, arrangeInterface);
     }
 
-    public void initBattleField(boolean newArrange) {
-
-        if (newArrange) {
-            ships = Init.createShips(game.getSettings());
-        } else {
-            ships = Init.deepCopyOfShips(game.getGamerShip()); // game.getGamerShip();
-        }
-
+    public void initBattleField() {
+        ships = Init.deepCopyOfShips(game.getGamerShip());
         update = false;
-        arrangeBattleField.refreshFullBattleField(ships);
-        game.getGraphicDriver().drawRedLineForNeighbor(arrangeBattleField.getTiles(), arrangeBattleField.getCanvas());
+        game.getShipArrangement().getArrangeBattleField().getUserInterface().resetState();
     }
 
     public List<Ship> getShips() {

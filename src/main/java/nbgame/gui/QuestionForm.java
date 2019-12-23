@@ -9,8 +9,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class QuestionForm {
-    private static final Button btnCancel = new Button("Cancel");
-    private static final Button btnOk = new Button("Ok");
+    private static final Button BTN_CANCEL = new Button("Cancel");
+    private static final Button BTN_OK = new Button("Ok");
+
     private static boolean answer = true;
 
     public static boolean open(String prompt, String question) {
@@ -34,19 +35,19 @@ public class QuestionForm {
                 "                -fx-text-alignment: center;" +
                 "                -fx-padding: 20 40 20 40;");
 
-        btnOk.setStyle(
+        BTN_OK.setStyle(
                 "                -fx-font-family: Arial;" +
                 "                -fx-font-size: 14px;" +
                 "                -fx-font-weight: normal;" +
                 "                -fx-text-fill: black;");
-        btnOk.setOnAction(e -> {answer = true; close();});
+        BTN_OK.setOnAction(e -> {answer = true; close();});
 
-        btnCancel.setStyle(
+        BTN_CANCEL.setStyle(
                 "                -fx-font-family: Arial;" +
                 "                -fx-font-size: 14px;" +
                 "                -fx-font-weight: normal;" +
                 "                -fx-text-fill: black;");
-        btnCancel.setOnAction(e -> {answer = false; close();});
+        BTN_CANCEL.setOnAction(e -> {answer = false; close();});
 
         HBox topBox = new HBox();
         topBox.setStyle("    -fx-alignment: center;");
@@ -57,18 +58,16 @@ public class QuestionForm {
                 "                -fx-alignment: center-right;" +
                 "                -fx-padding: 10px;");
         bottomBox.setSpacing(15);
-        bottomBox.getChildren().addAll(btnOk, btnCancel);
+        bottomBox.getChildren().addAll(BTN_OK, BTN_CANCEL);
 
         root.setTop(topBox);
         root.setBottom(bottomBox);
 
-        Scene scene = new Scene(root);
-
-        return scene;
+        return new Scene(root);
     }
 
     private static void close() {
-        Stage stage = (Stage) btnCancel.getScene().getWindow();
+        Stage stage = (Stage) BTN_CANCEL.getScene().getWindow();
         stage.close();
     }
 

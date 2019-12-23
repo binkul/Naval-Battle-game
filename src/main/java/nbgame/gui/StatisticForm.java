@@ -62,15 +62,11 @@ public class StatisticForm {
         titleBox.setStyle("    -fx-alignment: center;");
         titleBox.getChildren().add(lblTitle);
 
-        AnchorPane infoBox = new AnchorPane(); // HBox infoBox = new HBox();
+        AnchorPane infoBox = new AnchorPane();
         AnchorPane.setLeftAnchor(listView, 20d);
         AnchorPane.setRightAnchor(listView, 20d);
         AnchorPane.setBottomAnchor(listView, 20d);
         AnchorPane.setTopAnchor(listView, 20d);
-
-//        infoBox.setStyle(
-//                "    -fx-alignment: center;" +
-//                "    -fx-pref-width: 550pt;");
         infoBox.getChildren().add(listView);
 
         HBox exitBox = new HBox();
@@ -84,8 +80,6 @@ public class StatisticForm {
         root.setCenter(infoBox);
         root.setBottom(exitBox);
 
-        Scene scene = new Scene(root);
-
-        return scene;
+        return new Scene(root);
     }
 }

@@ -12,7 +12,7 @@ import nbgame.engine.Init;
 import nbgame.ship.Hit;
 import nbgame.ship.Ship;
 import nbgame.ship.Tile;
-import nbgame.ship.VertHoriz;
+import nbgame.ship.Position;
 import nbgame.user.Movable;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class BattleField extends Canvas {
         super(Dimension.CANVAS_WIDTH, Dimension.CANVAS_HEIGHT);
         this.game = game;
         this.userInterface = userInterface;
-        background = new Image(pathDriver.getPicPath(backgroundPath));
+        background = new Image(pathDriver.getPath(backgroundPath));
         init();
     }
 
@@ -41,7 +41,7 @@ public class BattleField extends Canvas {
     private void init() {
         setEvents();
         viewFinder = new Canvas(Dimension.TILE_WIDTH, Dimension.TILE_HEIGHT);
-        viewFinder.getGraphicsContext2D().drawImage(new Image(pathDriver.getPicPath(FileAccess.VIEWFINDER_PIC_PATH)), 0, 0);
+        viewFinder.getGraphicsContext2D().drawImage(new Image(pathDriver.getPath(FileAccess.VIEWFINDER_PIC_PATH)), 0, 0);
         tiles = Init.createField();
         repaintBackground();
     }
@@ -77,7 +77,7 @@ public class BattleField extends Canvas {
 
             for (int i = 0; i < ship.getLength(); i++) {
                 tiles[row][column].addShip(ship);
-                if (ship.getOrientation() == VertHoriz.VERTICAL) {
+                if (ship.getOrientation() == Position.VERTICAL) {
                     row++;
                 } else {
                     column++;

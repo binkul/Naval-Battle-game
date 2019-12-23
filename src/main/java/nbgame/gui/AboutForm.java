@@ -24,9 +24,9 @@ public class AboutForm {
             "The computer ships placement is always random!\n" +
             "After placing the ships, the game can be started via Game -> Start game.\n" +
             "Good lock!";
-    private static final Button btnClose = new Button("Close");
+    private static final Button BTN_CLOSE = new Button("Close");
 
-    public static void open(String icoPath) {
+    static void open(String icoPath) {
         Stage window = new Stage();
         window.setScene(setScene());
         window.setTitle("About");
@@ -53,13 +53,13 @@ public class AboutForm {
                 "    -fx-text-alignment: left;" +
                 "    -fx-padding: 0 5 0 5;");
 
-        btnClose.setStyle(
+        BTN_CLOSE.setStyle(
                 "    -fx-font-family: Arial;" +
                 "    -fx-font-size: 16px;" +
                 "    -fx-font-weight: bold;" +
                 "    -fx-text-fill: blue;");
-        btnClose.setOnAction(e -> {
-            Stage stage = (Stage) btnClose.getScene().getWindow();
+        BTN_CLOSE.setOnAction(e -> {
+            Stage stage = (Stage) BTN_CLOSE.getScene().getWindow();
             stage.close();});
 
         HBox titleBox = new HBox();
@@ -74,14 +74,12 @@ public class AboutForm {
                 "    -fx-alignment: center-right;" +
                 "    -fx-padding: 15px;");
 
-        exitBox.getChildren().add(btnClose);
+        exitBox.getChildren().add(BTN_CLOSE);
 
         root.setTop(titleBox);
         root.setCenter(infoBox);
         root.setBottom(exitBox);
 
-        Scene scene = new Scene(root);
-
-        return scene;
+        return new Scene(root);
     }
 }

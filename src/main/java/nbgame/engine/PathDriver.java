@@ -1,20 +1,18 @@
 package nbgame.engine;
 
-import nbgame.game.Statistic;
-
-import java.util.List;
+import java.util.Objects;
 
 public class PathDriver {
 
-    public String getPicPath(String imagePath) {
-        String path = "";
+    public String getPath(String imagePath) {
+        String path;
+        ClassLoader loader = getClass().getClassLoader();
 
         try {
-            ClassLoader loader = getClass().getClassLoader();
-            path = loader.getResource(imagePath).toString();
+            path = Objects.requireNonNull(loader.getResource(imagePath)).toString();
             path = path.replaceAll("%20", " ");
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+        } catch (NullPointerException ex) {
+            path = "";
         }
 
         return path;

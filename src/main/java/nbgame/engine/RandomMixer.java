@@ -5,36 +5,30 @@ import nbgame.game.Settings;
 import nbgame.ship.Ship;
 import nbgame.ship.ShipType;
 import nbgame.ship.Tile;
-import nbgame.ship.VertHoriz;
+import nbgame.ship.Position;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class RandomMixer {
-    private static final Random random = new Random();
+    private static final Random RANDOM = new Random();
 
     public static List<Ship> randomShip(Settings settings) {
         List<Ship> ships = new ArrayList<>();
         Tile[][] tiles = Init.createField();
-        int id = 1;
 
-        generateShip(id, settings.getFourMastCount(), ShipType.FOUR_MAST, tiles, ships);
-        id += settings.getFourMastCount();
-
-        generateShip(id, settings.getThreeMastCount(), ShipType.THREE_MAST, tiles, ships);
-        id += settings.getThreeMastCount();
-
-        generateShip(id, settings.getTwoMastCount(), ShipType.TWO_MAST, tiles, ships);
-        id += settings.getTwoMastCount();
-
-        generateShip(id, settings.getOneMastCount(), ShipType.ONE_MAST, tiles, ships);
+        generateShip(settings.getFourMastCount(), ShipType.FOUR_MAST, tiles, ships);
+        generateShip(settings.getThreeMastCount(), ShipType.THREE_MAST, tiles, ships);
+        generateShip(settings.getTwoMastCount(), ShipType.TWO_MAST, tiles, ships);
+        generateShip(settings.getOneMastCount(), ShipType.ONE_MAST, tiles, ships);
 
         return ships;
     }
 
-    private static void generateShip(int id, int count, ShipType shipType, Tile[][] tiles, List<Ship> ships) {
+    private static void generateShip(int count, ShipType shipType, Tile[][] tiles, List<Ship> ships) {
         Ship tmpShip;
+        int id = 1;
 
         for (int i = 0; i < count; i++) {
             tmpShip = ship(id, shipType, tiles);
@@ -45,17 +39,17 @@ public class RandomMixer {
     }
 
     private static Ship ship (int id, ShipType shipType, Tile[][] tiles) {
-        VertHoriz orientation = null;
+        Position orientation = null;
         int row = 0;
         int column = 0;
         int neighbor = 1;
 
         while (neighbor > 0) {
-            orientation = getOrientation() ? VertHoriz.VERTICAL : VertHoriz.HORIZONTAL;
+            orientation = getOrientation() ? Position.VERTICAL : Position.HORIZONTAL;
             row = getRow(orientation, shipType);
             column = getColumn(orientation, shipType);
 
-            if (orientation == VertHoriz.VERTICAL) {
+            if (orientation == Position.VERTICAL) {
                 neighbor = checkVertNeighbor(row, column, shipType.getShipLength(), tiles);
             } else {
                 neighbor = checkHorizNeighbor(row, column, shipType.getShipLength(), tiles);
@@ -94,28 +88,28 @@ public class RandomMixer {
     }
 
     private static boolean getOrientation() {
-        return random.nextBoolean();
+        return RANDOM.nextBoolean();
     }
 
-    private static int getRow(VertHoriz orientation, ShipType shipType) {
+    private static int getRow(Position orientation, ShipType shipType) {
         int row;
 
-        if (orientation == VertHoriz.VERTICAL) {
-            row = random.nextInt(Dimension.FIELD_HEIGHT - shipType.getShipLength() + 1);
+        if (orientation == Position.VERTICAL) {
+            row = RANDOM.nextInt(Dimension.FIELD_HEIGHT - shipType.getShipLength() + 1);
         } else {
-            row = random.nextInt(Dimension.FIELD_HEIGHT);
+            row = RANDOM.nextInt(Dimension.FIELD_HEIGHT);
         }
 
         return row;
     }
 
-    private static int getColumn(VertHoriz orientation, ShipType shipType) {
+    private static int getColumn(Position orientation, ShipType shipType) {
         int column;
 
-        if (orientation == VertHoriz.VERTICAL) {
-            column = random.nextInt(Dimension.FIELD_WIDTH);
+        if (orientation == Position.VERTICAL) {
+            column = RANDOM.nextInt(Dimension.FIELD_WIDTH);
         } else {
-            column = random.nextInt(Dimension.FIELD_WIDTH - shipType.getShipLength() + 1);
+            column = RANDOM.nextInt(Dimension.FIELD_WIDTH - shipType.getShipLength() + 1);
         }
 
         return column;

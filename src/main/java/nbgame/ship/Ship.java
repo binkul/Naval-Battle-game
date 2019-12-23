@@ -6,21 +6,17 @@ public class Ship {
     private int id;
     private ShipType shipType;
     private Point head;
-    private VertHoriz orientation;
+    private Position orientation;
     private ShipStatus operation;
     private int hit;
 
-    public Ship(int id, int row, int column, ShipType shipType, VertHoriz orientation) {
+    public Ship(int id, int row, int column, ShipType shipType, Position orientation) {
         this.id = id;
         this.head = new Point(row, column);
         this.shipType = shipType;
         this.orientation = orientation;
         this.operation = ShipStatus.NONE;
         this.hit = 0;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public Point getHead() {
@@ -39,7 +35,7 @@ public class Ship {
         return shipType.getShipWidthPix();
     }
 
-    public VertHoriz getOrientation() {
+    public Position getOrientation() {
         return orientation;
     }
 
@@ -51,7 +47,7 @@ public class Ship {
         return hit;
     }
 
-    public void setOrientation(VertHoriz orientation) {
+    public void setOrientation(Position orientation) {
         this.orientation = orientation;
     }
 

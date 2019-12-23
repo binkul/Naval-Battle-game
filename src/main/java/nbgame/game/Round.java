@@ -107,7 +107,7 @@ public class Round {
             animPlay.getChildren().add(createAnimFrame(shotX, shotY, Hit.HIT));
             game.getGameForm().getLblCompResult().setText(String.valueOf(compResultCount));
 
-            shootLogic.updateLogic(ship, shootPoint);
+            shootLogic.buildStrategy(ship, shootPoint);
         }
 
         if (checkForGamerWin(game.getGamerShip())) {
@@ -124,12 +124,10 @@ public class Round {
     private void printGamerMessage(Ship ship) {
         if (ship == null) {
             game.getGameForm().getTxtStatus().setText(game.getSettings().getName() + ", You missed!");
-        } else {
-            if (ship.getHitResult() == Hit.HIT) {
-                game.getGameForm().getTxtStatus().setText(game.getSettings().getName() + ", You hit, but You didn't sink. Shoot again!");
-            } else if (ship.getHitResult() == Hit.HIT_AND_SINK) {
+        } else if (ship.getHitResult() == Hit.HIT) {
+            game.getGameForm().getTxtStatus().setText(game.getSettings().getName() + ", You hit, but You didn't sink. Shoot again!");
+        } else if (ship.getHitResult() == Hit.HIT_AND_SINK) {
                 game.getGameForm().getTxtStatus().setText("Congratulation " + game.getSettings().getName() + ", You hit and sink. Shoot again!");
-            }
         }
     }
 

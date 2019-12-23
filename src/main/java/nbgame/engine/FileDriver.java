@@ -7,63 +7,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileDriver {
-    private static final String fileName = "statistic.dat";
-    private final PathDriver pathDriver;
+    private static final String FILE_NAME = "statistic.dat";
     private String path;
 
     public FileDriver() {
-        this.pathDriver = new PathDriver();
-        path = createPath();
-        if (path.length() > 0) {
-            createFile();
-        }
-    }
-
-    private String createPath() {
-        String result = pathDriver.getPicPath("result");
-        if (result.length() > 0) {
-            result = result.replace("file:/", "");
-            result += "/" + fileName;
-        }
-        return result;
+        createFile();
     }
 
     private void createFile() {
+        path = System.getProperty("user.dir") + "\\" + FILE_NAME;
         File file = new File(path);
 
         try {
             file.createNewFile();
-        } catch (IOException ex) {
-            System.out.println("Problem with file creation: '" + path + "'. " + ex.getMessage());
-        }
+        } catch (IOException ignored) {}
     }
 
     public void writeResult(Statistic statistic) {
         List<Statistic> statistics = readAllResults();
-        ObjectOutputStream ois = null;
 
-        try {
-            ois = new ObjectOutputStream(new FileOutputStream(path));
+        try (ObjectOutputStream ois = new ObjectOutputStream(new FileOutputStream(path))) {
             for(Statistic stat : statistics) {
                 ois.writeObject(stat);
             }
             ois.writeObject(statistic);
-        } catch (IOException ex) {
-            System.out.println("Problem with output stream from file: " + path + "'. " + ex.getMessage());
-        } finally {
-            closeOutputFile(ois);
-        }
+        } catch (IOException ignored) {}
     }
 
     public List<Statistic> readAllResults() {
         List<Statistic> statistics = new ArrayList<>();
         Statistic statistic;
-        ObjectInputStream ois = null;
         File file = new File(path);
 
         if (file.length() > 0) {
-            try {
-                ois = new ObjectInputStream(new FileInputStream(path));
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path))) {
                 statistic = readResult(ois);
 
                 while (statistic != null) {
@@ -71,11 +48,7 @@ public class FileDriver {
                     statistic = readResult(ois);
                 }
 
-            } catch (IOException ex) {
-                System.out.println("Problem with input stream from file: " + path + "'. " + ex.getMessage());
-            } finally {
-                closeInputFile(ois);
-            }
+            } catch (IOException ignored) {}
         }
 
         return statistics;
@@ -87,28 +60,12 @@ public class FileDriver {
         try {
             Object tmp = ois.readObject();
             if (tmp instanceof Statistic) {
-                statistic = (Statistic)tmp;
+                statistic = (Statistic) tmp;
             }
         } catch (IOException | ClassNotFoundException ex) {
             return null;
         }
 
         return statistic;
-    }
-
-    private void closeInputFile(ObjectInputStream ois) {
-        try {
-            if (ois != null) ois.close();
-        } catch (IOException ex) {
-            System.out.println("Problem with file closing: " + path + "'. " + ex.getMessage());
-        }
-    }
-
-    private void closeOutputFile(ObjectOutputStream ois) {
-        try {
-            if (ois != null) ois.close();
-        } catch (IOException ex) {
-            System.out.println("Problem with file closing: " + path + "'. " + ex.getMessage());
-        }
     }
 }

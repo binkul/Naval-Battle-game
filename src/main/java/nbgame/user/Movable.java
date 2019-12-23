@@ -7,4 +7,5 @@ public interface Movable {
     void pressButton(Object event);
     default void releaseButton(Object event) {}
     default void moveItem(Object event) {}
+    default void resetState() {}
 }

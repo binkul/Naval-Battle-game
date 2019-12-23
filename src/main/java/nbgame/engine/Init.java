@@ -33,7 +33,7 @@ public class Init {
 
     private static void addShip(int id, List<Ship> ships, int row, int column, int count, ShipType shipType) {
         for (int i = 0; i < count; i++) {
-            ships.add(new Ship(id, row, column, shipType, VertHoriz.VERTICAL));
+            ships.add(new Ship(id, row, column, shipType, Position.VERTICAL));
             column++;
             id++;
         }
@@ -55,7 +55,7 @@ public class Init {
 
         for (int i = 0; i < ship.getLength(); i++) {
             tiles[row][column].addShip(ship);
-            if (ship.getOrientation() == VertHoriz.VERTICAL) {
+            if (ship.getOrientation() == Position.VERTICAL) {
                 row++;
             } else {
                 column++;
@@ -72,7 +72,7 @@ public class Init {
         }
     }
 
-    public static List<Ship> deepCopyOfShips(List<Ship> source) {
+    static List<Ship> deepCopyOfShips(List<Ship> source) {
         List<Ship> ships = new ArrayList<>();
         int id = 1;
 

@@ -5,7 +5,6 @@ import nbgame.engine.*;
 import nbgame.gui.GameForm;
 import nbgame.gui.IntroForm;
 import nbgame.ship.Ship;
-import nbgame.user.BattleKeyboard;
 import nbgame.user.BattleMouse;
 import nbgame.user.Movable;
 
@@ -14,6 +13,12 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class Game {
+    private final static int INITIAL_FOUR_MAST_SHIPS = 2;
+    private final static int INITIAL_THREE_MAST_SHIPS = 3;
+    private final static int INITIAL_TWO_MAST_SHIPS = 4;
+    private final static int INITIAL_ONE_MAST_SHIPS = 4;
+    private final static String INITIAL_NAME = "None";
+
     private final GameForm gameForm;
     private final ShipArrangement shipArrangement;
     private final GraphicDriver graphicDriver;
@@ -32,13 +37,13 @@ public class Game {
     private List<Statistic> statistics;
 
     public Game() {
-        settings = new Settings(2, 3, 4, 4, "None");
+        settings = new Settings(INITIAL_FOUR_MAST_SHIPS, INITIAL_THREE_MAST_SHIPS, INITIAL_TWO_MAST_SHIPS, INITIAL_ONE_MAST_SHIPS, INITIAL_NAME);
         gameForm = new GameForm(this);
         shipArrangement = new ShipArrangement(this);
-        graphicDriver = new GraphicDriver(this);
+        graphicDriver = new GraphicDriver();
         fileDriver = new FileDriver();
 
-        gamerShips = Init.createShips(settings);
+        gamerShips = RandomMixer.randomShip(settings);
         computerShips = RandomMixer.randomShip(settings);
         statistics = fileDriver.readAllResults();
 
@@ -47,7 +52,7 @@ public class Game {
 
     public void initGame() {
         PathDriver pathDriver = new PathDriver();
-        IntroForm.open(pathDriver.getPicPath(FileAccess.SHIP_ICO_PATH));
+        IntroForm.open(pathDriver.getPath(FileAccess.SHIP_ICO_PATH));
 
         gamerBattleField.refreshFullBattleField(gamerShips);
         gamerBattleField.getViewFinder().setVisible(false);
@@ -62,8 +67,6 @@ public class Game {
         computerShips = RandomMixer.randomShip(settings);
         computerBattleField.refreshBattleField(computerShips);
         computerBattleField.getViewFinder().setVisible(true);
-
-        //graphicDriver.drawShipsPicOnField(computerShips, computerBattleField.getCanvas()); //tymczas odkryj statki
 
         Init.clearShipsContent(gamerShips);
         gamerBattleField.refreshFullBattleField(gamerShips);
@@ -85,7 +88,7 @@ public class Game {
         round.createAnimFinish();
     }
 
-    public void endGame() {
+    void endGame() {
         createStatistic();
 
         graphicDriver.drawAllAfterBattle(computerBattleField, computerShips);
@@ -165,11 +168,10 @@ public class Game {
     }
 
     public void updateSettings() {
-            gamerShips = Init.createShips(settings);
+            gamerShips = RandomMixer.randomShip(settings);
             gamerBattleField.refreshFullBattleField(gamerShips);
 
             computerShips = RandomMixer.randomShip(settings);
-            //computerBattleField.refreshBattleField(computerShips);
             computerBattleField.resetTiles();
             computerBattleField.putShipsOnTiles(computerShips);
     }

@@ -81,6 +81,18 @@ public class ArrangeKeyboard implements Movable {
         }
     }
 
+    @Override
+    public void resetState() {
+        shipTaken = false;
+        shipDrag = null;
+        row = 0;
+        column = 0;
+
+        game.getShipArrangement().getArrangeBattleField().refreshFullBattleField(game.getShipArrangement().getShips());
+        userCommon.checkProblems();
+        moveCursor();
+    }
+
     private void moveLeft() {
         if (shipTaken) {
             if (userCommon.isMoveHorizPossible(shipDrag,-1)) {
@@ -162,6 +174,6 @@ public class ArrangeKeyboard implements Movable {
         int relocateY = row * Dimension.TILE_WIDTH + Dimension.FIELD_LEFT_MARGIN;
 
         game.getShipArrangement().getArrangeBattleField().getViewFinder().relocate(relocateX, relocateY);
-        game.getGameForm().getArrangeForm().getBtnOk().setDisable(userCommon.checkCollision());
+        userCommon.checkProblems();
     }
 }

@@ -3,8 +3,8 @@ package nbgame.ship;
 import java.util.Objects;
 
 public class Point {
-    int row;
-    int column;
+    private int row;
+    private int column;
 
     public Point(int row, int column) {
         this.row = row;

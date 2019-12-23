@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 public class IntroForm {
-    private static final Button btnStart = new Button("Start");
+    private static final Button BTN_START = new Button("Start");
 
     public static void open(String icoPath) {
         Stage window = new Stage();
@@ -25,18 +25,18 @@ public class IntroForm {
 
     private static Scene setScene() {
 
-        btnStart.setStyle(
+        BTN_START.setStyle(
                 "    -fx-font-family: Arial;" +
                 "    -fx-font-size: 24px;" +
                 "    -fx-font-weight: bold;" +
                 "    -fx-text-fill: red;");
-        btnStart.setOnAction(startGame);
+        BTN_START.setOnAction(startGame);
 
         StackPane bottomSet = new StackPane();
         bottomSet.setStyle(
                 "     -fx-pref-height: 150px;" +
                 "     -fx-alignment: center;");
-        bottomSet.getChildren().add(btnStart);
+        bottomSet.getChildren().add(BTN_START);
 
         BorderPane root = new BorderPane();
         root.setStyle(
@@ -46,13 +46,11 @@ public class IntroForm {
 
         root.setPrefSize(1000, 700);
 
-        Scene scene = new Scene(root);
-
-        return scene;
+        return new Scene(root);
     }
 
     private static EventHandler<ActionEvent> startGame = e -> {
-        Stage stage = (Stage) btnStart.getScene().getWindow();
+        Stage stage = (Stage) BTN_START.getScene().getWindow();
         stage.close();
     };
 }

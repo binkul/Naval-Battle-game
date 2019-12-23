@@ -138,8 +138,18 @@ public class ArrangeMouse implements Movable {
             game.getGraphicDriver().repaintAll(ships, battleField.getTiles(), battleField.getCanvas());
             game.getShipArrangement().setUpdate(true);
 
-            game.getGameForm().getArrangeForm().getBtnOk().setDisable(userCommon.checkCollision());
+            userCommon.checkProblems();
         }
+    }
+
+    @Override
+    public void resetState() {
+        BattleField battleField = game.getShipArrangement().getArrangeBattleField();
+
+        shipDrag = null;
+        game.getShipArrangement().getArrangeBattleField().refreshFullBattleField(game.getShipArrangement().getShips());
+        game.getGraphicDriver().drawRedLineForNeighbor(battleField.getTiles(), battleField.getCanvas());
+        userCommon.checkProblems();
     }
 
     private void takeShipToDrag(MouseEvent event) {
