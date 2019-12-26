@@ -33,7 +33,7 @@ public class ShootLogic implements Logicable {
 
     @Override
     public Point getNextShoot() {
-        Level level = game.getGameForm().getLevelOfDifficulty();
+        Level level = game.getSettings().getLevelOfDifficulty();
 
         if (level == Level.LOW) {
             return shootRandom();
@@ -91,7 +91,7 @@ public class ShootLogic implements Logicable {
             column = RANDOM.nextInt(Dimension.FIELD_WIDTH);
             tile = game.getGamerBattleField().getTiles()[row][column];
 
-            if (game.getGameForm().getLevelOfDifficulty() == Level.EXPERT) {
+            if (game.getSettings().getLevelOfDifficulty() == Level.EXPERT) {
                 if (repeatCount > MAX_RANDOM_REPEAT) {
                     repeat = (tile.getHit() != Hit.NONE);
                 } else {

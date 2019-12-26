@@ -6,6 +6,7 @@ public class Settings {
     private int twoMastCount;
     private int oneMastCount;
     private String name;
+    private Level levelOfDifficulty;
 
     public Settings(int fourMastCount, int threeMastCount, int twoMastCount, int oneMastCount, String name) {
         this.fourMastCount = fourMastCount;
@@ -13,6 +14,7 @@ public class Settings {
         this.twoMastCount = twoMastCount;
         this.oneMastCount = oneMastCount;
         this.name = name;
+        this.levelOfDifficulty = Level.LOW;
     }
 
     public int getFourMastCount() {
@@ -35,6 +37,10 @@ public class Settings {
         return oneMastCount;
     }
 
+    public Level getLevelOfDifficulty() {
+        return levelOfDifficulty;
+    }
+
     public void setFourMastCount(int fourMastCount) {
         this.fourMastCount = fourMastCount;
     }
@@ -49,6 +55,10 @@ public class Settings {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setLevelOfDifficulty(Level levelOfDifficulty) {
+        this.levelOfDifficulty = levelOfDifficulty;
     }
 
     public void setOneMastCount(int oneMastCount) {

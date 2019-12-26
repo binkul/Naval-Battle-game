@@ -7,12 +7,16 @@ import nbgame.gui.IntroForm;
 import nbgame.ship.Ship;
 import nbgame.user.BattleMouse;
 import nbgame.user.Movable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 public class Game {
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final static int INITIAL_FOUR_MAST_SHIPS = 2;
     private final static int INITIAL_THREE_MAST_SHIPS = 3;
     private final static int INITIAL_TWO_MAST_SHIPS = 4;
@@ -84,6 +88,7 @@ public class Game {
         round = new Round(this);
 
         status = Status.RUN;
+        LOG.info("New game started between {} and computer", settings.getName());
 
         round.createAnimFinish();
     }

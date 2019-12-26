@@ -1,12 +1,16 @@
 package nbgame.engine;
 
 import nbgame.game.Statistic;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
 public class FileDriver {
+    private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String FILE_NAME = "statistic.dat";
     private String path;
 
@@ -19,8 +23,12 @@ public class FileDriver {
         File file = new File(path);
 
         try {
-            file.createNewFile();
-        } catch (IOException ignored) {}
+            if( file.createNewFile()) {
+                LOG.info("File '{}' successfully created.", path);
+            }
+        } catch (IOException ex) {
+            LOG.error("Error creating file '{}'. ", path);
+        }
     }
 
     public void writeResult(Statistic statistic) {
@@ -31,7 +39,9 @@ public class FileDriver {
                 ois.writeObject(stat);
             }
             ois.writeObject(statistic);
-        } catch (IOException ignored) {}
+        } catch (IOException ex) {
+            LOG.error("Error writing statistic '{}' to file '{}'", statistic, path);
+        }
     }
 
     public List<Statistic> readAllResults() {
@@ -48,7 +58,9 @@ public class FileDriver {
                     statistic = readResult(ois);
                 }
 
-            } catch (IOException ignored) {}
+            } catch (IOException ex) {
+                LOG.error("Error reading all statistic from file '{}'", path);
+            }
         }
 
         return statistics;

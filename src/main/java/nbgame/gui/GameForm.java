@@ -34,7 +34,6 @@ public class GameForm {
     private final MenuItem menuEnd = new MenuItem("End game");
 
     private ArrangeForm arrangeForm;
-    private Level levelOfDifficulty = Level.LOW;
 
     public GameForm(Game game) {
         this.game = game;
@@ -89,19 +88,19 @@ public class GameForm {
         ToggleGroup toggleGroup = new ToggleGroup();
         RadioMenuItem radioLow = new RadioMenuItem("Pure random");
         radioLow.setSelected(true);
-        radioLow.setOnAction(e -> levelOfDifficulty = Level.LOW);
+        radioLow.setOnAction(e -> game.getSettings().setLevelOfDifficulty(Level.LOW));
         radioLow.setToggleGroup(toggleGroup);
 
         RadioMenuItem radioMedium = new RadioMenuItem("Medium");
-        radioMedium.setOnAction(e -> levelOfDifficulty = Level.MEDIUM);
+        radioMedium.setOnAction(e -> game.getSettings().setLevelOfDifficulty(Level.MEDIUM));
         radioMedium.setToggleGroup(toggleGroup);
 
         RadioMenuItem radioHigh = new RadioMenuItem("High");
-        radioHigh.setOnAction(e -> levelOfDifficulty = Level.HIGH);
+        radioHigh.setOnAction(e -> game.getSettings().setLevelOfDifficulty(Level.HIGH));
         radioHigh.setToggleGroup(toggleGroup);
 
         RadioMenuItem radioExpert = new RadioMenuItem("Expert");
-        radioExpert.setOnAction(e -> levelOfDifficulty = Level.EXPERT);
+        radioExpert.setOnAction(e -> game.getSettings().setLevelOfDifficulty(Level.EXPERT));
         radioExpert.setToggleGroup(toggleGroup);
 
         Menu menuLevel = new Menu("Level");
@@ -288,10 +287,6 @@ public class GameForm {
 
     public MenuItem getMenuEnd() {
         return menuEnd;
-    }
-
-    public Level getLevelOfDifficulty() {
-        return levelOfDifficulty;
     }
 
     public void resetResultsLabels() {
